@@ -32,7 +32,7 @@ class BaseModel:
 
     def to_dict(self):
         """generate a dictionary representation of an instance"""
-        my_dict = self.__dict__
+        my_dict = self.__dict__.copy()
         my_dict["__class__"] = self.__class__.__name__
         my_dict["created_at"] = datetime.isoformat(self.created_at)
         my_dict["updated_at"] = datetime.isoformat(self.updated_at)
