@@ -13,8 +13,8 @@ class BaseModel:
         format = "%Y-%m-%dT%H:%M:%S.%f"
         if len(kwargs) != 0:
             for key, value in kwargs.items():
-                if kwargs[key] == "created_at" or kwargs[key] == "updated_at":
-                    value = datetime.strptime(kwargs[key], format)
+                if key == "created_at" or key == "updated_at":
+                    value = datetime.strptime(value, format)
                 if key != "__class__":
                     setattr(self, key, value)
         else:
