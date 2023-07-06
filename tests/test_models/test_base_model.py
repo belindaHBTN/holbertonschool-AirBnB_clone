@@ -23,13 +23,20 @@ class TestBaseModel(unittest.TestCase):
 
     def test_to_dict(self):
         """Test the to_dict method is functioning correctly"""
-        self.assertEqual(type(self.my_model.to_dict()), dict)
+        test_dict = self.my_model.to_dict()
+        self.assertEqual(type(test_dict), dict)
+        self.assertDictEqual(test_dict, self.my_model.to_dict())
 
     def test_id(self):
         """Tests the random id alloction"""
         self.assertTrue(self.my_model.id)
         self.my_model_2 = BaseModel()
         self.assertNotEqual(self.my_model.id, self.my_model_2.id)
+
+    def test_str(self):
+        """Test the string return value"""
+        formatted_string = self.my_model.__str__
+        self.assertTrue(formatted_string)
 
     def tearDown(self):
         """Clean up the instance that was used for testing"""
