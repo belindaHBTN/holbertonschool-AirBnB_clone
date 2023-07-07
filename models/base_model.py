@@ -11,7 +11,7 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """initialise attrs"""
-        attributes_list = ['id', 'name', 'number']
+        attributes_list = ['id', 'name', 'my_number']
         attributes_ignore_list = ["__class__"]
         attribute_datetime_list = ['created_at', 'updated_at']
         format = "%Y-%m-%dT%H:%M:%S.%f"
