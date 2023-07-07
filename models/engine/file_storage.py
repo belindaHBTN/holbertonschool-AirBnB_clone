@@ -25,12 +25,18 @@ class FileStorage:
         obj_class_name = obj.__class__.__name__
         obj_id = obj.id
         key = obj_class_name + "." + obj_id
-        FileStorage.__objects[key] = obj.to_dict()
+        self.__objects[key] = obj
 
     def save(self):
         """serializes objects dictionary to the JSON file"""
-        with open(FileStorage.__file_path, "w") as a_file:
-            json.dump(FileStorage.__objects, a_file)
+        new_dict = {}
+        for key in self.__objects:
+            new_dict[key] = self.__objects[key].to_dict()
+        try:
+            with open(FileStorage.__file_path, "w") as a_file:
+                json.dump(new_dict, a_file)
+        except:
+            pass
 
     def reload(self):
         """deserializes the JSON file to objects dictionary"""
@@ -39,13 +45,16 @@ class FileStorage:
         dict_classes = {
             "BaseModel": BaseModel
             }
-        if os.path.exists(FileStorage.__file_path):
-            dict_objects = {}
-            with open(FileStorage.__file_path, "r") as b_file:
+        dict_objects = {}
+        try:
+            with open(self.__file_path, "r") as b_file:
                 dict_objects = json.load(b_file)
-            for key, value_dict in dict_objects.items():
-                current_class = value_dict["__class__"]
-                if current_class in dict_classes:
-                    FileStorage.__objects[key] = dict_classes[current_class](**value_dict)
-                else:
-                    raise TypeError(f"unknown class: {current_class}")
+        except:
+            dict_objects = {}
+            pass
+        for key, value_dict in dict_objects.items():
+            current_class = value_dict["__class__"]
+            if current_class in dict_classes:
+                self.__objects[key] = dict_classes[current_class](**value_dict)
+            else:
+                raise TypeError(f"unknown class: {current_class}")
