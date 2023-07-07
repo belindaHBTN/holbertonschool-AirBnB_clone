@@ -34,10 +34,18 @@ class FileStorage:
 
     def reload(self):
         """deserializes the JSON file to objects dictionary"""
+        from models.base_model import BaseModel
+
+        dict_classes = {
+            "BaseModel": BaseModel
+            }
         if os.path.exists(FileStorage.__file_path):
             dict_objects = {}
             with open(FileStorage.__file_path, "r") as b_file:
                 dict_objects = json.load(b_file)
-                from models.base_model import BaseModel
-                for key, value in dict_objects.items():
-                    FileStorage.__objects[key] = BaseModel(value)
+            for key, value_dict in dict_objects.items():
+                current_class = value_dict["__class__"]
+                if current_class in dict_classes:
+                    FileStorage.__objects[key] = dict_classes[current_class](**value_dict)
+                else:
+                    raise TypeError(f"unknown class: {current_class}")
