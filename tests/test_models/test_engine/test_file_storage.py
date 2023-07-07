@@ -46,4 +46,5 @@ class TestFileStorage(unittest.TestCase):
 
     def tearDown(self):
         """Clean up the instance that was used for testing"""
-        pass
+        with open(self.fs._FileStorage__file_path, 'w') as file:
+            file.write("")
