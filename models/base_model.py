@@ -11,13 +11,20 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """initialise attrs"""
+        attributes_list = ['id', 'name', 'number']
+        attributes_ignore_list = ["__class__"]
+        attribute_datetime_list = ['created_at', 'updated_at']
         format = "%Y-%m-%dT%H:%M:%S.%f"
         if len(kwargs) != 0:
             for key, value in kwargs.items():
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, format)
-                if key != "__class__":
+                if key in attributes_ignore_list:
+                    continue
+                elif key in attribute_datetime_list:
+                    setattr(self, key, datetime.now().fromisoformat(value))
+                elif key in attributes_list:
                     setattr(self, key, value)
+                else:
+                    raise ValueError(f"Unknown attribute: {key}")
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
@@ -31,6 +38,7 @@ class BaseModel:
     def save(self):
         """update the datetime"""
         self.updated_at = datetime.now()
+        storage.new(self)
         storage.save()
 
     def to_dict(self):
