@@ -41,9 +41,11 @@ class FileStorage:
     def reload(self):
         """deserializes the JSON file to objects dictionary"""
         from models.base_model import BaseModel
+        from models.user import User
 
-        dict_classes = {
-            "BaseModel": BaseModel
+        class_name_dict = {
+            "BaseModel": BaseModel,
+            "User": User
             }
         dict_objects = {}
         try:
@@ -52,9 +54,10 @@ class FileStorage:
         except:
             dict_objects = {}
             pass
-        for key, value_dict in dict_objects.items():
-            current_class = value_dict["__class__"]
-            if current_class in dict_classes:
-                self.__objects[key] = dict_classes[current_class](**value_dict)
+        for key, value in dict_objects.items():
+            class_name_str = value["__class__"]
+            if class_name_str in class_name_dict:
+                class_name = class_name_dict[class_name_str]
+                FileStorage.__objects[key] = class_name(**value)
             else:
                 raise TypeError(f"unknown class: {current_class}")
