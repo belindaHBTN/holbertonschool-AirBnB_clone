@@ -2,10 +2,11 @@
 
 """Module for testing FileStorage class"""
 import unittest
+import os
 from datetime import datetime
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
-
+from models import storage
 
 class TestFileStorage(unittest.TestCase):
     """Class for testing the FileStorage"""
@@ -13,6 +14,14 @@ class TestFileStorage(unittest.TestCase):
     def setUp(self):
         """Create an instance for use in testing"""
         self.fs = FileStorage()
+        kwargs = {
+            "name": "My test base model",
+            "id": "42",
+            "my_number": 3.14,
+            "created_at": str(datetime.now()),
+            "updated_at": str(datetime.now())
+        }
+        self.bm1 = BaseModel(**kwargs)
 
     def test_file_path(self):
         """Test the file path class attribute"""
@@ -32,19 +41,15 @@ class TestFileStorage(unittest.TestCase):
 
     def test_new_method(self):
         """Test the instance method new"""
-        kwargs = {
-            "name": "My test base model",
-            "id": "42",
-            "my_number": 3.14,
-            "created_at": str(datetime.now()),
-            "updated_at": str(datetime.now())
-        }
-        bm1 = BaseModel(**kwargs)
-        bm1.save()
+        self.bm1.save()
         test_obj_dict_1 = self.fs._FileStorage__objects
-        self.assertEqual(test_obj_dict_1["BaseModel.42"], bm1)
+        self.assertEqual(test_obj_dict_1["BaseModel.42"], self.bm1)
+        storage.new(self.bm1)
+        self.assertTrue(test_obj_dict_1["BaseModel.42"])
 
     def tearDown(self):
         """Clean up the instance that was used for testing"""
-        with open(self.fs._FileStorage__file_path, 'w') as file:
-            file.write("")
+        try:
+            os.remove(self.fs._FileStorage__file_path)
+        except FileNotFoundError:
+            pass
