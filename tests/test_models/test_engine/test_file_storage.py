@@ -37,6 +37,7 @@ class TestFileStorage(unittest.TestCase):
         """Test the instance method all"""
         test_obj_dict = self.fs._FileStorage__objects
         test_all_dict = self.fs.all()
+        self.assertEqual(type(test_all_dict), dict)
         self.assertDictEqual(test_obj_dict, test_all_dict)
 
     def test_new_method(self):
