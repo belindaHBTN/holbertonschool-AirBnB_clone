@@ -41,11 +41,21 @@ class FileStorage:
     def reload(self):
         """deserializes the JSON file to objects dictionary"""
         from models.base_model import BaseModel
-        from models.user import User
+        from models.user import Us
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.place import Place
+        from models.review import Review
 
         class_name_dict = {
             "BaseModel": BaseModel,
-            "User": User
+            "User": User,
+            "State": State,
+            "City": City,
+            "Amenity": Amenity,
+            "Place": Place,
+            "Review": Review
             }
         dict_objects = {}
         try:
