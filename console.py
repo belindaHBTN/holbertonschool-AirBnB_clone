@@ -15,7 +15,7 @@ from models.review import Review
 
 class HBNBCommand(cmd.Cmd):
     """Contains the entry point of the command interpreter"""
-    class_name_dict  = {
+    class_name_dict = {
         "BaseModel": BaseModel,
         "User": User,
         "State": State,
@@ -136,6 +136,7 @@ class HBNBCommand(cmd.Cmd):
                     storage.save()
                     return
             print("** no instance found **")
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

@@ -35,7 +35,7 @@ class FileStorage:
         try:
             with open(FileStorage.__file_path, "w") as a_file:
                 json.dump(new_dict, a_file)
-        except:
+        except Exception:
             pass
 
     def reload(self):
@@ -61,7 +61,7 @@ class FileStorage:
         try:
             with open(self.__file_path, "r") as b_file:
                 dict_objects = json.load(b_file)
-        except:
+        except Exception:
             dict_objects = {}
             pass
         for key, value in dict_objects.items():
