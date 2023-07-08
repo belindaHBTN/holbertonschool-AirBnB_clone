@@ -94,21 +94,20 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, args):
         """Print string representation of instances based on class name"""
         list_of_ins_str = []
-        list_of_ins_dict = []
+        list_of_ins_obj = []
         obj_dict = storage.all()
         for value in obj_dict.values():
             list_of_ins_str.append(value.__str__())
-            list_of_ins_dict.append(value.to_dict())
+            list_of_ins_obj.append(value)
+
         if not args:
             print(list_of_ins_str)
         elif args in HBNBCommand.class_name_dict.keys():
-            filtered_list_str = []
-            filtered_list_obj = list(filter(lambda x: x["__class__"] == args,
-                                            list_of_ins_dict))
-            for obj in filtered_list_obj:
-                x = HBNBCommand.class_name_dict[args](**obj)
-                filtered_list_str.append(x.__str__())
-            print(filtered_list_str)
+            filtered_list = []
+            for obj in list_of_ins_obj:
+                if obj.__class__.__name__ == args:
+                    filtered_list.append(obj.__str__())
+            print(filtered_list)
         else:
             print("** class doesn't exist **")
 
