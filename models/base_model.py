@@ -11,7 +11,6 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """initialise attrs"""
-        attributes_list = ['id', 'name', 'my_number']
         attributes_ignore_list = ["__class__"]
         attribute_datetime_list = ['created_at', 'updated_at']
         format = "%Y-%m-%dT%H:%M:%S.%f"
@@ -21,10 +20,8 @@ class BaseModel:
                     continue
                 elif key in attribute_datetime_list:
                     setattr(self, key, datetime.now().fromisoformat(value))
-                elif key in attributes_list:
-                    setattr(self, key, value)
                 else:
-                    raise ValueError(f"Unknown attribute: {key}")
+                    setattr(self, key, value)
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
