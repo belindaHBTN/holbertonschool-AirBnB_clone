@@ -106,7 +106,7 @@ class HBNBCommand(cmd.Cmd):
 
         if not args:
             print("** class name missing **")
-        elif arg_list[0] != 'BaseModel':
+        elif args not in HBNBCommand.class_name_dict.keys():
             print("** class doesn't exist **")
         elif len(arg_list) == 1:
             print("** instance id missing **")
