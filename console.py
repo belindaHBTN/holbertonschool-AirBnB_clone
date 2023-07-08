@@ -95,11 +95,11 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
         elif arg_list[0] != 'BaseModel':
             print("** class doesn't exist **")
-        elif not arg_list[1]:
+        elif len(arg_list) == 1:
             print("** instance id missing **")
-        elif not arg_list[2]:
+        elif len(arg_list) == 2:
             print("** attribute name missing **")
-        elif not arg_list[3]:
+        elif len(arg_list) == 3:
             print("** value missing **")
         else:
             arg_list[3] = arg_list[3].replace('"', '')
