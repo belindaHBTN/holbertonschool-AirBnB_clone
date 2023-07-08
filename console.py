@@ -3,12 +3,15 @@
 """A program that contains the entry point of the command interpreter"""
 import cmd
 from models.base_model import BaseModel
+from models.user import User
 from models.engine.file_storage import FileStorage
 from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
     """Contains the entry point of the command interpreter"""
+    class_name_dict  = {"BaseModel": BaseModel, "User": User}
+
     prompt = "(hbnb)"
 
     def do_quit(self, args):
@@ -29,10 +32,10 @@ class HBNBCommand(cmd.Cmd):
         """Creates a new instance, saves it and prints the id"""
         if not args:
             print("** class name missing **")
-        elif args != "BaseModel":
+        elif args not in HBNBCommand.class_name_dict.keys():
             print("** class doesn't exist **")
         else:
-            my_model = BaseModel()
+            my_model = HBNBCommand.class_name_dict[args]()
             my_model.save()
             print(my_model.id)
 
@@ -43,7 +46,7 @@ class HBNBCommand(cmd.Cmd):
 
         if not args:
             print("** class name missing **")
-        elif arg_list[0] != 'BaseModel':
+        elif arg_list[0] not in HBNBCommand.class_name_dict.keys():
             print("** class doesn't exist **")
         elif len(arg_list) == 1:
             print("** instance id missing **")
@@ -62,7 +65,7 @@ class HBNBCommand(cmd.Cmd):
 
         if not args:
             print("** class name missing **")
-        elif arg_list[0] != 'BaseModel':
+        elif arg_list[0] not in HBNBCommand.class_name_dict.keys():
             print("** class doesn't exist **")
         elif len(arg_list) == 1:
             print("** instance id missing **")
@@ -78,12 +81,19 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """Print string representation of instances based or not on class name"""
-        if not args or args == 'BaseModel':
-            list_base_model_instances = []
-            obj_dict = storage.all()
-            for value in obj_dict.values():
-                list_base_model_instances.append(value.__str__())
-            print(list_base_model_instances)
+        list_of_ins_str = []
+        list_of_ins_obj = []
+        obj_dict = storage.all()
+        for value in obj_dict.values():
+            list_of_ins_str.append(value.__str__())
+            list_of_ins_obj.append(value)
+
+        if not args:
+            print(list_of_ins_str)
+        elif args in HBNBCommand.class_name_dict.keys():
+            filtered_ins_str = list(filter(lambda x: getattr(x, "__class__") == args,
+                list_of_ins_obj))
+            print(filtered_ins_str)
         else:
             print("** class doesn't exist **")
 
