@@ -15,26 +15,18 @@ class TestFileStorage(unittest.TestCase):
     def setUp(self):
         """Create an instance for use in testing"""
         self.fs = FileStorage()
-        kwargs1 = {
+        kwargs = {
             "name": "My test base model 1",
             "id": "11",
             "my_number": 1111,
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat()
         }
-        kwargs2 = {
-            "name": "My test base model 2",
-            "id": "22",
-            "my_number": 2222,
-            "created_at": datetime.now().isoformat(),
-            "updated_at": datetime.now().isoformat()
-        }
-        self.bm1 = BaseModel(**kwargs1)
-        self.bm2 = BaseModel(**kwargs2)
+
+        self.bm = BaseModel(**kwargs)
 
         self.test_path = self.fs._FileStorage__file_path
-        self.fs.new(self.bm1)
-        self.fs.new(self.bm2)
+        self.fs.new(self.bm)
         self.fs.save()
         self.fs.reload()
         self.obj_dict = self.fs.all()
@@ -64,6 +56,11 @@ class TestFileStorage(unittest.TestCase):
         new_fs.reload()
         new_obj_dict = new_fs.all()
         self.assertEqual(self.obj_dict, new_obj_dict)
+
+    def test_reload_method_obj(self):
+        obj_old = self.obj_dict["BaseModel.11"]
+        obj_new = BaseModel(**obj_old.to_dict())
+        self.assertEqual(obj_old.to_dict(), obj_new.to_dict())
 
     def tearDown(self):
         """Clean up the instance that was used for testing"""
