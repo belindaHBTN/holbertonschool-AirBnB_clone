@@ -3,10 +3,11 @@
 """Module for testing FileStorage class"""
 import unittest
 import os
+import json
 from datetime import datetime
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
-from models import storage
+
 
 class TestFileStorage(unittest.TestCase):
     """Class for testing the FileStorage"""
@@ -14,39 +15,55 @@ class TestFileStorage(unittest.TestCase):
     def setUp(self):
         """Create an instance for use in testing"""
         self.fs = FileStorage()
-        kwargs = {
-            "name": "My test base model",
-            "id": "42",
-            "my_number": 3.14,
-            "created_at": str(datetime.now()),
-            "updated_at": str(datetime.now())
+        kwargs1 = {
+            "name": "My test base model 1",
+            "id": "11",
+            "my_number": 1111,
+            "created_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat()
         }
-        self.bm1 = BaseModel(**kwargs)
+        kwargs2 = {
+            "name": "My test base model 2",
+            "id": "22",
+            "my_number": 2222,
+            "created_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat()
+        }
+        self.bm1 = BaseModel(**kwargs1)
+        self.bm2 = BaseModel(**kwargs2)
+
+        self.test_path = self.fs._FileStorage__file_path
+        self.fs.new(self.bm1)
+        self.fs.new(self.bm2)
+        self.fs.save()
+        self.fs.reload()
+        self.obj_dict = self.fs.all()
 
     def test_file_path(self):
         """Test the file path class attribute"""
-        test_path = self.fs._FileStorage__file_path
-        self.assertEqual(test_path, "file.json")
+        self.assertEqual(self.test_path, "file.json")
 
     def test_objects_dict(self):
         """Test the class attribute objects"""
-        test_obj_dict = self.fs._FileStorage__objects
-        self.assertEqual(type(test_obj_dict), dict)
-
-    def test_all_method(self):
-        """Test the instance method all"""
-        test_obj_dict = self.fs._FileStorage__objects
-        test_all_dict = self.fs.all()
-        self.assertEqual(type(test_all_dict), dict)
-        self.assertDictEqual(test_obj_dict, test_all_dict)
+        self.assertEqual(type(self.obj_dict), dict)
 
     def test_new_method(self):
         """Test the instance method new"""
-        self.bm1.save()
-        test_obj_dict_1 = self.fs._FileStorage__objects
-        self.assertEqual(test_obj_dict_1["BaseModel.42"], self.bm1)
-        storage.new(self.bm1)
-        self.assertTrue(test_obj_dict_1["BaseModel.42"])
+        self.assertIn("BaseModel.11", self.obj_dict)
+
+    def test_save_method(self):
+        """Test the instance method save"""
+        self.assertTrue(os.path.exists(self.test_path))
+        with open(self.test_path, "r", encoding='utf-8') as a_file:
+            data = json.load(a_file)
+        self.assertIn("BaseModel.11", data)
+
+    def test_reload_method(self):
+        """Test the instance method reload"""
+        new_fs = FileStorage()
+        new_fs.reload()
+        new_obj_dict = new_fs.all()
+        self.assertEqual(self.obj_dict, new_obj_dict)
 
     def tearDown(self):
         """Clean up the instance that was used for testing"""
